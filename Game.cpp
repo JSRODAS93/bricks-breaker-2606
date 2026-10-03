@@ -37,6 +37,7 @@ void Game::Reset()
 		brick.y_position = 5;
 		brick.doubleThick = true;
 		brick.color = ConsoleColor::DarkGreen;
+		brick.hitCounter = 0;
 
 		bricks.push_back(brick);
 	}
@@ -98,22 +99,32 @@ void Game::CheckCollision()
 	{
 		if (bricks[i].Contains(ball.x_position + ball.x_velocity, ball.y_position + ball.y_velocity))
 		{
-			bricks[i].hitCounter++;
-			bricks[i].color = ConsoleColor(bricks[i].color - 1);
 			ball.y_velocity *= -1;
 
+			bricks[i].hitCounter++;
+
+			bricks[i].color = ConsoleColor(bricks[i].color - 1);
+
 			// TODO #5 - If the ball hits the same brick 3 times (color == black), remove it from the vector
-			if (bricks[i].hitCounter >= 3)
+			if (bricks[i].hitCounter == 1)
+			{
+				bricks[i].color = ConsoleColor::Yellow;
+			}
+			else if (bricks[i].hitCounter == 2)
+			{
+				bricks[i].color = ConsoleColor::Red;
+			}
+			else if (bricks[i].hitCounter >= 3)
 			{
 				bricks.erase(bricks.begin() + i);
 			}
-
 			break;
 		}
 	}
 	// TODO #6 - If no bricks remain, pause ball and display (render) victory text with R to reset
 	if (bricks.empty())
 	{
+		ball.moving = false;
 		Console::SetCursorPosition(WINDOW_WIDTH / 2 - 16, WINDOW_HEIGHT / 2);
 		std::cout << "You Win!. Press 'R' to play again";
 	}
@@ -126,6 +137,7 @@ void Game::CheckCollision()
 	// TODO #7 - If ball touches bottom of window, pause ball and display (render) defeat text with R to reset
 	if (ball.y_position >= WINDOW_HEIGHT - 1)
 	{
+		ball.moving = false;
 		Console::SetCursorPosition(WINDOW_WIDTH / 2 - 17, WINDOW_HEIGHT / 2);
 		std::cout << "You lose. Press 'R' to play again.";
 	}
