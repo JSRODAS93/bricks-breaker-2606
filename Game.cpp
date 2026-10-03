@@ -98,18 +98,16 @@ void Game::CheckCollision()
 	{
 		if (bricks[i].Contains(ball.x_position + ball.x_velocity, ball.y_position + ball.y_velocity))
 		{
+			bricks[i].hitCounter++;
 			bricks[i].color = ConsoleColor(bricks[i].color - 1);
 			ball.y_velocity *= -1;
 
 			// TODO #5 - If the ball hits the same brick 3 times (color == black), remove it from the vector
-			if (bricks[i].color <= ConsoleColor::DarkGray || bricks[i].color <= ConsoleColor::Black)
+			if (bricks[i].hitCounter >= 3)
 			{
-				bricks.erase(bricks.begin() + 1);
+				bricks.erase(bricks.begin() + i);
 			}
-			else
-			{
-				bricks[i].color = ConsoleColor(bricks[i].color - 1);
-			}
+			
 			break;
 		}
 	}
