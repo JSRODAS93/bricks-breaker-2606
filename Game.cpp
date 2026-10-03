@@ -24,14 +24,22 @@ void Game::Reset()
 	bricks.clear();
 
 	int totalBricks = 5;
-	bricks.resize(totalBricks);
+	int brickwidth = 10;
+	int spacing = 3;
+	int startX = 5;
 
-	bricks[0].width = 10;
-	bricks[0].height = 2;
-	bricks[0].x_position = 0;
-	bricks[0].y_position = 5;
-	bricks[0].doubleThick = true;
-	bricks[0].color = ConsoleColor::DarkGreen;
+	for (int i = 0; i < totalBricks; i++)
+	{
+		Box brick;
+		brick.width = brickwidth;
+		brick.height = 2;
+		brick.x_position = startX + i * (brickwidth + spacing);
+		brick.y_position = 5;
+		brick.doubleThick = true;
+		brick.color = ConsoleColor::DarkGreen;
+
+		bricks.push_back(brick);
+	}
 }
 
 void Game::ResetBall()
@@ -94,7 +102,15 @@ void Game::CheckCollision()
 			ball.y_velocity *= -1;
 
 			// TODO #5 - If the ball hits the same brick 3 times (color == black), remove it from the vector
-
+			if (bricks[i].color <= ConsoleColor::DarkGray || bricks[i].color <= ConsoleColor::Black)
+			{
+				bricks.erase(bricks.begin() + 1);
+			}
+			else
+			{
+				bricks[i].color = ConsoleColor(bricks[i].color - 1);
+			}
+			break;
 		}
 	}
 	// TODO #6 - If no bricks remain, pause ball and display (render) victory text with R to reset
